@@ -9,3 +9,22 @@ Consignes
 - Le programme principal récupère les résultats et affiche la somme totale.
 - Gère les erreurs d’ouverture de fichiers proprement.
 - Utilise un canal (chan int) pour envoyer les résultats des goroutines au main.
+
+Your code is a good start, but it does not fully meet the assignment requirements. Here are the main issues and suggestions:
+
+### Issues
+
+1. **Counts bytes, not words:**  
+   Your code uses `len(data)` which counts the number of bytes in the file, not the number of words.
+
+2. **Error handling:**  
+   If a file can't be read, you print the error but still send `len(data)` (which would be 0) to the channel. It's better to handle errors more explicitly.
+
+3. **Concurrency:**  
+   You launch a goroutine for each file, but immediately wait for its result before starting the next one. This is effectively sequential, not concurrent.
+
+### Suggestions
+
+- Use `strings.Fields` to split the file content into words and count them.
+- Launch all goroutines first, then collect results.
+- Handle errors by sending a special value (e.g., 0) or using a separate channel for errors.
