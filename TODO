@@ -1,0 +1,11 @@
+Objectif
+
+Écrire un programme qui lit plusieurs fichiers texte (dont les noms sont passés en arguments)
+et calcule le nombre total de mots dans tous ces fichiers, en utilisant une goroutine par fichier.
+
+Consignes
+
+- Chaque goroutine compte les mots dans un fichier donné.
+- Le programme principal récupère les résultats et affiche la somme totale.
+- Gère les erreurs d’ouverture de fichiers proprement.
+- Utilise un canal (chan int) pour envoyer les résultats des goroutines au main.
