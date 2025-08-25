@@ -1,0 +1,18 @@
+Exercise: Simple RESTful API Server
+
+Goal:
+Build a basic HTTP server in Go that manages a list of tasks (a simple TODO API).
+
+Requirements:
+
+- Create a Task struct with fields: ID (int), Title (string), and Done (bool).
+- Implement the following HTTP endpoints:
+    GET /tasks — List all tasks.
+    POST /tasks — Add a new task (accept JSON: { "title": "Buy milk" }).
+    PUT /tasks/{id} — Mark a task as done.
+    DELETE /tasks/{id} — Delete a task.
+- Store tasks in memory (no database needed).
+- Use the standard library (net/http, encoding/json).
+
+Bonus:
+Add error handling and return appropriate HTTP status codes.
