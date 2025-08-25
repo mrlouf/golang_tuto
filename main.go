@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"io/ioutil"
+	"strings"
 )
 
 func run(file string, ch chan int) {
@@ -11,8 +12,11 @@ func run(file string, ch chan int) {
 	data, err := ioutil.ReadFile(file)
     if err != nil {
         fmt.Println(err)
+		ch <- 0
+		return
     }
-	ch <- len(data)
+	words := strings.Fields(string(data))
+	ch <- len(words)
 }
 
 func main() {
@@ -22,14 +26,15 @@ func main() {
 
 	fmt.Println(len(argsWithoutProg), "files to read")
 
-	var x int = 0
-
 	for _, filename := range argsWithoutProg {
 		go run(filename, ch)
-		var tmp = <- ch
-		fmt.Println(tmp)
-		x = x + tmp
 	}
 
-	fmt.Println(x)
+	total := 0
+
+	for i := 0; i < len(argsWithoutProg); i++ {
+		total += <-ch
+	}
+
+	fmt.Println("Total words read:", total)
 }
