@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"strings"
 	"strconv"
+	"encoding/json"
 )
 
 type Task struct {
@@ -32,7 +33,16 @@ func taskHandler(w http.ResponseWriter, r *http.Request, tasks *[]Task) {
 	
 	case http.MethodGet:
 		log.Println("GET request received")
-		fmt.Printf("%v\n", tasks)
+
+		for _, task := range *tasks {
+
+			b, err := json.Marshal(task)
+			if err != nil {
+				log.Fatalf("Unable to marshal due to %s\n", err)
+			}
+
+			fmt.Println(string(b))
+		}
 
 	case http.MethodPost:
 		log.Println("POST request received")
@@ -87,7 +97,8 @@ func taskHandler(w http.ResponseWriter, r *http.Request, tasks *[]Task) {
 		}
 
 	default:
-		log.Println("Error 501: Not Implemented")
+		http.Error(w, "Invalid Method", http.StatusNotImplemented)
+		log.Printf("Error 501: Not Implemented: %s\n", r.Method)
 	}
 }
 
