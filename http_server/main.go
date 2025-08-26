@@ -7,111 +7,24 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"strings"
-	"strconv"
-	"encoding/json"
+
+	"tutogo/mod/http_server/api"
+	"tutogo/mod/http_server/utils"
 )
-
-type Task struct {
-	ID int
-	Title string
-	Done bool
-}
-
-var taskId = 0
-
-func gracefulShutdown() {
-
-	log.Println("Graceful shutdown of the server...")
-
-}
-
-func taskHandler(w http.ResponseWriter, r *http.Request, tasks *[]Task) {
-    log.Println("/tasks endpoint reached, handling request...")
-	
-	switch r.Method {
-	
-	case http.MethodGet:
-		log.Println("GET request received")
-
-		for _, task := range *tasks {
-
-			b, err := json.Marshal(task)
-			if err != nil {
-				log.Fatalf("Unable to marshal due to %s\n", err)
-			}
-
-			fmt.Println(string(b))
-		}
-
-	case http.MethodPost:
-		log.Println("POST request received")
-
-		*tasks = append(*tasks, Task{taskId, "buy milk", false})
-		taskId++
-
-	case http.MethodPut:
-		log.Println("PUT request received")
-
-		path := strings.TrimPrefix(r.URL.Path, "/tasks")
-		if path == "" || path == "/" {
-			log.Println("No task ID in URL")
-			return
-		} else {
-			idStr := strings.TrimPrefix(path, "/")
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				http.Error(w, "Invalid task ID", http.StatusBadRequest)
-				return
-			}
-			log.Printf("Task ID in URL: %d\n", id)
-			for idx := range *tasks {
-				if (*tasks)[idx].ID == id {
-					(*tasks)[idx].Done = true
-					break
-				}
-			}
-		}
-
-	case http.MethodDelete:
-		log.Println("DELETE request received")
-
-		path := strings.TrimPrefix(r.URL.Path, "/tasks")
-		if path == "" || path == "/" {
-			log.Println("No task ID in URL")
-			return
-		} else {
-			idStr := strings.TrimPrefix(path, "/")
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				http.Error(w, "Invalid task ID", http.StatusBadRequest)
-				return
-			}
-			log.Printf("Task ID in URL: %d\n", id)
-			for idx, t := range *tasks {
-				if t.ID == id {
-					*tasks = append((*tasks)[:idx], (*tasks)[idx+1:]...)
-					break
-				}
-			}
-		}
-
-	default:
-		http.Error(w, "Invalid Method", http.StatusNotImplemented)
-		log.Printf("Error 501: Not Implemented: %s\n", r.Method)
-	}
-}
 
 func main() {
 
-	tasks := []Task{}
+	store := &api.TaskStore{
+		Tasks:	 []api.Task{},
+		Counter: 0,
+	}
 
 	log.Println("Starting HTTP server on :8080...")
     http.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
-        taskHandler(w, r, &tasks)
+        api.TaskHandler(w, r, store)
     })
 	http.HandleFunc("/tasks/", func(w http.ResponseWriter, r *http.Request) {
-	    taskHandler(w, r, &tasks)
+	    api.TaskHandler(w, r, store)
 	})
 
 	// Listen for signals to shutdown the server
@@ -119,7 +32,7 @@ func main() {
     signal.Notify(c, os.Interrupt, syscall.SIGTERM)
     go func() {
         <-c
-        gracefulShutdown()
+        utils.GracefulShutdown()
         os.Exit(0)
     }()
 	
