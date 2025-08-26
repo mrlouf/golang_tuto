@@ -20,5 +20,5 @@ type Banket struct {
 	TimeToEat uint16
 	TimeToSleep uint16
 	NbMeals uint8
-
+	Start uint64
 }
