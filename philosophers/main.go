@@ -3,6 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"tutugo/mod/philosophers/types"
+	"tutogo/mod/philosophers/parser"
+	"tutogo/mod/philosophers/initialisation"
+	"tutogo/mod/philosophers/simulation"
 )
 
 func main() {
@@ -14,4 +19,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	banket := &types.Banket{}
+
+	parser.Parser(args)
+	initialisation.Initialiser(args, banket)
+	simulation.Start(banket)
+
+	os.Exit(0)
 }
