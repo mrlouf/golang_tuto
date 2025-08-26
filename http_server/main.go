@@ -7,11 +7,17 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"strings"
+	"strconv"
 )
 
-func getTask() {
-
+type Task struct {
+	ID int
+	Title string
+	Done bool
 }
+
+var i = 0
 
 func gracefulShutdown() {
 
@@ -19,12 +25,83 @@ func gracefulShutdown() {
 
 }
 
+func taskHandler(w http.ResponseWriter, r *http.Request, tasks *[]Task) {
+    log.Println("/tasks endpoint reached, handling request...")
+	
+	switch r.Method {
+	
+	case http.MethodGet:
+		log.Println("GET request received")
+		fmt.Printf("%v\n", tasks)
+
+	case http.MethodPost:
+		log.Println("POST request received")
+
+		*tasks = append(*tasks, Task{i, "buy milk", false})
+		i++
+
+	case http.MethodPut:
+		log.Println("PUT request received")
+
+		path := strings.TrimPrefix(r.URL.Path, "/tasks")
+		if path == "" || path == "/" {
+			log.Println("No task ID in URL")
+			return
+		} else {
+			idStr := strings.TrimPrefix(path, "/")
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				http.Error(w, "Invalid task ID", http.StatusBadRequest)
+				return
+			}
+			log.Printf("Task ID in URL: %d\n", id)
+			for idx := range *tasks {
+				if (*tasks)[idx].ID == id {
+					(*tasks)[idx].Done = true
+					break
+				}
+			}
+		}
+
+	case http.MethodDelete:
+		log.Println("DELETE request received")
+
+		path := strings.TrimPrefix(r.URL.Path, "/tasks")
+		if path == "" || path == "/" {
+			log.Println("No task ID in URL")
+			return
+		} else {
+			idStr := strings.TrimPrefix(path, "/")
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				http.Error(w, "Invalid task ID", http.StatusBadRequest)
+				return
+			}
+			log.Printf("Task ID in URL: %d\n", id)
+			for idx, t := range *tasks {
+				if t.ID == id {
+					*tasks = append((*tasks)[:idx], (*tasks)[idx+1:]...)
+					break
+				}
+			}
+		}
+
+	default:
+		log.Println("Error 501: Not Implemented")
+	}
+}
+
 func main() {
 
-	log.Println("Starting HTTP server on :8080...")
+	tasks := []Task{}
 
-/* 	fs := http.FileServer(http.Dir("./static"))
-    http.Handle("/", fs) */
+	log.Println("Starting HTTP server on :8080...")
+    http.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
+        taskHandler(w, r, &tasks)
+    })
+	http.HandleFunc("/tasks/", func(w http.ResponseWriter, r *http.Request) {
+	    taskHandler(w, r, &tasks)
+	})
 
 	// Listen for signals to shutdown the server
     c := make(chan os.Signal)
