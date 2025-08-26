@@ -17,7 +17,7 @@ type Task struct {
 	Done bool
 }
 
-var i = 0
+var taskId = 0
 
 func gracefulShutdown() {
 
@@ -37,8 +37,8 @@ func taskHandler(w http.ResponseWriter, r *http.Request, tasks *[]Task) {
 	case http.MethodPost:
 		log.Println("POST request received")
 
-		*tasks = append(*tasks, Task{i, "buy milk", false})
-		i++
+		*tasks = append(*tasks, Task{taskId, "buy milk", false})
+		taskId++
 
 	case http.MethodPut:
 		log.Println("PUT request received")
