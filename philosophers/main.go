@@ -15,7 +15,7 @@ func main() {
 
 	argLen := len(args)
 	if argLen < 4 || argLen > 5 {
-		fmt.Println("Usage: './philosophers <nb_philos> <time_to_eat> <time_to_sleep> opt:<nb_of_meals'")
+		fmt.Println("Usage: './philosophers <nb_philos> <time_to_die> <time_to_eat> <time_to_sleep> opt:<nb_of_meals'")
 		os.Exit(1)
 	}
 
