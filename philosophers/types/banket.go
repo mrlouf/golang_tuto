@@ -16,7 +16,7 @@ type Philosopher struct {
 
 type Banket struct {
 	NbOfPhilosophers uint8
-	Philosophers *Philosopher{}
+	Philosophers *Philosopher
 	TimeToEat uint16
 	TimeToSleep uint16
 	NbMeals uint8

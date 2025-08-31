@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"tutugo/mod/philosophers/types"
-	"tutogo/mod/philosophers/parser"
+	"tutogo/mod/philosophers/types"
+	"tutogo/mod/philosophers/parsing"
 	"tutogo/mod/philosophers/initialisation"
 	"tutogo/mod/philosophers/simulation"
 )
@@ -21,9 +21,9 @@ func main() {
 
 	banket := &types.Banket{}
 
-	parser.Parser(args)
+	parsing.Parser(args)
 	initialisation.Initialiser(args, banket)
-	simulation.Start(banket)
+	simulation.Simulator(banket)
 
 	os.Exit(0)
 }

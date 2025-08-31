@@ -1,9 +1,11 @@
-package parser
+package parsing
 
 import (
 	"fmt"
 )
 
-func Parser() {
-	
+func Parser(args []string) {
+	fmt.Println("Starting Parser...")
+
+	fmt.Println(args)
 }
