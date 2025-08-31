@@ -5,20 +5,24 @@ import (
 )
 
 type Philosopher struct {
-	Id int
-	IsAlive bool
-	LeftFork *sync.Mutex
-	RightFork *sync.Mutex
-	Meals uint64
-	LastMeal uint64
-	Banket *Banket
+	Id 			int
+	IsAlive 	bool
+	LeftFork 	*sync.Mutex
+	RightFork 	*sync.Mutex
+	Meals 		int32
+	LastMeal 	uint64
+	Banket 		*Banket
 }
 
 type Banket struct {
-	NbOfPhilosophers uint8
-	Philosophers *Philosopher
-	TimeToEat uint16
-	TimeToSleep uint16
-	NbMeals uint8
-	Start uint64
+	NbOfPhilosophers	uint8
+	Philosophers 		[]Philosopher
+	Forks				[]sync.Mutex
+	TimeToDie 			int32
+	TimeToEat 			int32
+	TimeToSleep 		int32
+	NbMeals 			int32
+	Start 				uint64
+	PrintMutex			sync.Mutex
+	StatusMutex			sync.Mutex
 }

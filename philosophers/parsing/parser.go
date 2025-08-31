@@ -73,8 +73,6 @@ func checkNumberOfMeals(arg string) {
 }
 
 func Parser(args []string) {
-	fmt.Println("Starting Parser...")
-	fmt.Println(args)
 
 	checkNumberPhilos(args[0])
 	checkTimeToDie(args[1])
